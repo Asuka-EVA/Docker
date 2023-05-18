@@ -2161,7 +2161,26 @@ apache-tomcat-8.5.47.tar.gz  Dockerfile  jdk-8u211-linux-x64.tar.gz  jenkins.war
 [root@docker-server tomcat]# docker run -itd --name jenkins1 -p 8081:8080 jenkins:v1
 ```
 
+```shell
+FROM daocloud.io/library/centos:7
+ADD jdk-8u211-linux-x64.tar.gz /usr/local
+ADD apache-tomcat-8.5.45.tar.gz /usr/local
+ENV JAVA_HOME /usr/local/jdk1.8.0_211
+ENV PATH $JAVA_HOME/bin:$PATH
+RUN rm -rf /usr/local/apache-tomcat-8.5.45/webapps/*
+ADD jenkins.war /usr/local/apache-tomcat-8.5.45/webapps/
+EXPOSE 8080
+WORKDIR /usr/local/apache-tomcat-8.5.45
+ENTRYPOINT ["/usr/local/apache-tomcat-8.5.45/bin/catalina.sh","run"]
+```
 
+```shell
+docker build -t jenkins:1.3 . -f ./Dockerfile_jenkins 
+
+docker run -itd --name jenkins3 -p 8082:8080 jenkins:1.3
+
+docker exec -it jenkins3 /bin/bash
+```
 
 ![img](assets/Docker/image-20200726134658934.png)
 
@@ -2193,6 +2212,35 @@ COPY nginx.conf /usr/local/nginx/conf/nginx.conf
 WORKDIR /usr/local/nginx
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
+```
+
+```shell
+FROM daocloud.io/library/centos:7
+RUN useradd -M -s /sbin/nologin nginx \
+&& yum -y install readline-devel pcre-devel openssl-devel gcc  wget curl make \
+&& mkdir -p /usr/local/nginx \
+&& wget https://nginx.org/download/nginx-1.23.4.tar.gz \
+&& tar -xvzf nginx-1.23.4.tar.gz \
+&& cd nginx-1.23.4 \
+&& ./configure --prefix=/usr/local/nginx \
+    --with-http_ssl_module \
+    --with-http_stub_status_module \
+&& make -j 1 && make install \
+&& cd / \
+&& rm -rf nginx-1.23.4.tar.gz nginx-1.23.4 \
+&& rm -rf /usr/local/nginx/html/*  \
+&& echo "hello cainana" >> /usr/local/nginx/html/cloud.html \
+&& ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+ENV PATH /usr/local/nginx/sbin:$PATH
+WORKDIR /usr/local/nginx
+EXPOSE 80
+CMD ["nginx","-g","daemon off;"]
+
+```
+
+```shell
+docker build -t nginx:1.23.4 .
 ```
 
 **扩展----CMD与ENTRYPOINT区别**

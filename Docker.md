@@ -1546,6 +1546,10 @@ logs:使用logs命令查看守护式容器
 
 ​     可以通过使用docker logs命令来查看容器的运行日志，其中--tail选项可以指定查看最后几条日志，使用-f选项可以跟踪日志的输出，直到手动停止。
 
+```shell
+docker run -it --name nginx1 -p 8082:80 298ec0e28760 /bin/bash
+```
+
 
 
 ```shell

@@ -2898,7 +2898,11 @@ PONG
 把本地宿主机上面的某一个目录挂载到容器里面的目录去。这两个目录都不用提前存在，会自动创建。
 ```
 
+```shell
+/usr/share/nginx/html/index.html
 
+/etc/nginx/conf.d/default.conf
+```
 
 新卷只能在容器创建过程当中挂载
 
